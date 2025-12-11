@@ -6,12 +6,21 @@ def _load_streamlit_secrets():
     """Safely try to load secrets from Streamlit."""
     try:
         import streamlit as st
-        if hasattr(st, 'secrets') and st.secrets:
-            if 'OPENAI_API_KEY' in st.secrets:
-                os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
-                return True
-    except (ImportError, AttributeError, RuntimeError, KeyError):
-        # Streamlit not available, not initialized, or secrets not set
+        # Check if we're in a Streamlit context
+        if hasattr(st, 'secrets'):
+            try:
+                # Try to access secrets, but catch errors if not in Streamlit runtime
+                if hasattr(st.secrets, 'get') or 'OPENAI_API_KEY' in dir(st.secrets):
+                    # Use getattr to safely access without triggering file system checks
+                    api_key = getattr(st.secrets, 'OPENAI_API_KEY', None)
+                    if api_key:
+                        os.environ['OPENAI_API_KEY'] = api_key
+                        return True
+            except (RuntimeError, AttributeError, KeyError):
+                # Not in Streamlit runtime or secrets not available
+                pass
+    except ImportError:
+        # Streamlit not installed
         pass
     return False
 
