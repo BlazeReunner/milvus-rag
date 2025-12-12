@@ -24,46 +24,42 @@ openai_client = OpenAI()
 PARAPHRASE_MODEL = "gpt-4o-mini"
 
 # System prompt for query paraphrasing
-PARAPHRASE_PROMPT = """You are a query paraphrasing assistant. Your task is to generate diverse paraphrases of a given question.
+PARAPHRASE_PROMPT = """You are a query paraphrasing assistant. Your task is to generate a diverse paraphrase of a given question.
 
 Rules:
-1. Generate exactly 3 paraphrases of the input question.
-2. Each paraphrase should:
+1. Generate exactly 1 paraphrase of the input question.
+2. The paraphrase should:
    - Maintain the same meaning and intent as the original
    - Use different wording, phrasing, or structure
    - Be a complete, standalone question
    - Be clear and grammatically correct
-3. Vary the paraphrases to cover different phrasings:
+3. Vary the paraphrase to use different phrasing:
    - Use synonyms where appropriate
    - Change question structure (e.g., "What is X?" vs "Can you explain X?")
    - Vary formality level if appropriate
    - Use different question words if possible
-4. Return ONLY the 3 paraphrases, one per line, without numbering, bullets, or explanations.
+4. Return ONLY the 1 paraphrase, without numbering, bullets, or explanations.
 
 Examples:
 
 Input: "What is machine learning?"
 Output:
 Can you explain machine learning?
-How would you define machine learning?
-Tell me about machine learning.
 
 Input: "How many shares are selling?"
 Output:
 What is the number of shares being sold?
-How many shares are available for sale?
-What quantity of shares is being sold?
 
 Now paraphrase this question:"""
 
 
-def generate_paraphrases(query: str, num_paraphrases: int = 3, model: str = PARAPHRASE_MODEL) -> List[str]:
+def generate_paraphrases(query: str, num_paraphrases: int = 1, model: str = PARAPHRASE_MODEL) -> List[str]:
     """
     Generate paraphrases of a query using OpenAI.
     
     Args:
         query: The original user query
-        num_paraphrases: Number of paraphrases to generate (default: 3)
+        num_paraphrases: Number of paraphrases to generate (default: 1)
         model: LLM model to use for paraphrasing (default: gpt-4o-mini)
     
     Returns:
@@ -72,8 +68,7 @@ def generate_paraphrases(query: str, num_paraphrases: int = 3, model: str = PARA
     
     Example:
         >>> generate_paraphrases("What is machine learning?")
-        ['What is machine learning?', 'Can you explain machine learning?', 
-         'How would you define machine learning?', 'Tell me about machine learning.']
+        ['What is machine learning?', 'Can you explain machine learning?']
     """
     if not query or not query.strip():
         return [query]

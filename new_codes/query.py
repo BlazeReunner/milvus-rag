@@ -107,10 +107,10 @@ def _process_single_query(
             print(f"[Paraphrasing] Generating query paraphrases...")
         step_start = time.time()
         try:
-            query_variants = generate_paraphrases(query, num_paraphrases=3)
+            query_variants = generate_paraphrases(query, num_paraphrases=1)
             paraphrase_time = time.time() - step_start
             if verbose:
-                print(f"✓ Generated {len(query_variants) - 1} paraphrases:")
+                print(f"✓ Generated {len(query_variants) - 1} paraphrase:")
                 for i, variant in enumerate(query_variants, 1):
                     marker = "(original)" if i == 1 else "(paraphrase)"
                     print(f"  {i}. {variant} {marker}")
@@ -372,14 +372,14 @@ def query_rag(
     Complete RAG query pipeline with subquery decomposition and query paraphrasing support.
     
     Features:
-    1. Query Paraphrasing: Generates 3 paraphrases, searches with all variants, merges results
+    1. Query Paraphrasing: Generates 1 paraphrase, searches with all variants, merges results
     2. Subquery Decomposition: If query is complex, decomposes into sub-queries
     3. Each sub-query goes through: Paraphrase → Search → Merge → Rerank → MMR → Answer
     
     Args:
         query: User's question
         collection_name: Name of the Milvus collection
-        top_k_search: Number of chunks to retrieve from Milvus per query variant (default: 200)
+        top_k_search: Number of chunks to retrieve from Milvus per query variant (default: 200, total will be ~400 after merging)
         top_n_mmr: Top N chunks to consider for MMR (default: 15)
         final_k_mmr: Final number of diverse chunks to select (default: 6)
         lambda_mmr: MMR lambda parameter (default: 0.7)
